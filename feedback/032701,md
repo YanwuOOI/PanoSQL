@@ -1,0 +1,270 @@
+"D:\Program Files\Huawei\DevEco Studio\tools\node\node.exe" "D:\Program Files\Huawei\DevEco Studio\tools\hvigor\bin\hvigorw.js" --mode module -p module=entry@default -p product=default -p requiredDeviceType=2in1 assembleHap --analyze=normal --parallel --incremental --daemon
+> hvigor Finished :entry:default@PreBuild... after 24 ms 
+> hvigor Finished :entry:default@CreateModuleInfo... after 1 ms 
+> hvigor UP-TO-DATE :entry:default@GenerateMetadata...  
+> hvigor Finished :entry:default@ConfigureCmake... after 1 ms 
+> hvigor UP-TO-DATE :entry:default@MergeProfile...  
+> hvigor UP-TO-DATE :entry:default@CreateBuildProfile...  
+> hvigor Finished :entry:default@PreCheckSyscap... after 1 ms 
+> hvigor UP-TO-DATE :entry:default@GeneratePkgContextInfo...  
+> hvigor Finished :entry:default@GeneratePkgSdkInfo... after 5 ms 
+> hvigor Finished :entry:default@ProcessIntegratedHsp... after 2 ms 
+> hvigor Finished :entry:default@BuildNativeWithCmake... after 1 ms 
+> hvigor UP-TO-DATE :entry:default@MakePackInfo...  
+> hvigor Finished :entry:default@SyscapTransform... after 6 ms 
+> hvigor UP-TO-DATE :entry:default@ProcessProfile...  
+> hvigor UP-TO-DATE :entry:default@ProcessRouterMap...  
+> hvigor UP-TO-DATE :entry:default@ProcessShareConfig...  
+> hvigor Finished :entry:default@ProcessStartupConfig... after 5 ms 
+> hvigor Finished :entry:default@BuildNativeWithNinja... after 1 ms 
+> hvigor UP-TO-DATE :entry:default@ProcessResource...  
+> hvigor UP-TO-DATE :entry:default@GenerateLoaderJson...  
+> hvigor UP-TO-DATE :entry:default@ProcessLibs...  
+> hvigor UP-TO-DATE :entry:default@CompileResource...  
+> hvigor UP-TO-DATE :entry:default@DoNativeStrip...  
+> hvigor Finished :entry:default@BuildJS... after 7 ms 
+> hvigor UP-TO-DATE :entry:default@CacheNativeLibs...  
+> hvigor ERROR: Failed :entry:default@CompileArkTS... 
+> hvigor WARN: 
+1 WARN: ArkTS:WARN: For details about ArkTS syntax errors, see FAQs
+2 WARN: ArkTS:WARN File: D:/pano/Desktop/PanoSQL/entry/src/main/ets/services/FileTransferService.ets:31:10
+ Function may throw exceptions. Special handling is required.
+
+3 WARN: ArkTS:WARN File: D:/pano/Desktop/PanoSQL/entry/src/main/ets/services/FileTransferService.ets:246:12
+ Function may throw exceptions. Special handling is required.
+
+4 WARN: ArkTS:WARN File: D:/pano/Desktop/PanoSQL/entry/src/main/ets/entryability/EntryAbility.ets:60:19
+ 'resetSize' has been deprecated.
+
+5 WARN: ArkTS:WARN File: D:/pano/Desktop/PanoSQL/entry/src/main/ets/pages/Index.ets:68:16
+ 'pushUrl' has been deprecated.
+
+6 WARN: ArkTS:WARN File: D:/pano/Desktop/PanoSQL/entry/src/main/ets/pages/Index.ets:73:22
+ 'showToast' has been deprecated.
+
+7 WARN: ArkTS:WARN File: D:/pano/Desktop/PanoSQL/entry/src/main/ets/pages/Index.ets:81:7
+ Function may throw exceptions. Special handling is required.
+
+8 WARN: ArkTS:WARN File: D:/pano/Desktop/PanoSQL/entry/src/main/ets/pages/Index.ets:81:20
+ 'showToast' has been deprecated.
+
+9 WARN: ArkTS:WARN File: D:/pano/Desktop/PanoSQL/entry/src/main/ets/pages/Index.ets:95:7
+ Function may throw exceptions. Special handling is required.
+
+10 WARN: ArkTS:WARN File: D:/pano/Desktop/PanoSQL/entry/src/main/ets/pages/Index.ets:95:20
+ 'showToast' has been deprecated.
+
+11 WARN: ArkTS:WARN File: D:/pano/Desktop/PanoSQL/entry/src/main/ets/pages/Index.ets:113:14
+ 'pushUrl' has been deprecated.
+
+12 WARN: ArkTS:WARN File: D:/pano/Desktop/PanoSQL/entry/src/main/ets/pages/Index.ets:122:7
+ Function may throw exceptions. Special handling is required.
+
+13 WARN: ArkTS:WARN File: D:/pano/Desktop/PanoSQL/entry/src/main/ets/pages/Index.ets:122:20
+ 'showToast' has been deprecated.
+
+14 WARN: ArkTS:WARN File: D:/pano/Desktop/PanoSQL/entry/src/main/ets/pages/Index.ets:137:5
+ Function may throw exceptions. Special handling is required.
+
+15 WARN: ArkTS:WARN File: D:/pano/Desktop/PanoSQL/entry/src/main/ets/pages/Index.ets:137:12
+ 'pushUrl' has been deprecated.
+
+16 WARN: ArkTS:WARN File: D:/pano/Desktop/PanoSQL/entry/src/main/ets/services/DatabaseService.ets:53:40
+ Currently module for '../cpp/panodb_sqlite.so' is not verified. If you're importing napi, its verification will be enabled in later SDK version. Please make sure the corresponding .d.ts file is provided and the napis are correctly declared.
+
+17 WARN: ArkTS:WARN File: D:/pano/Desktop/PanoSQL/entry/src/main/ets/components/TableView.ets:169:8
+ 'onScroll' has been deprecated.
+
+18 WARN: ArkTS:WARN File: D:/pano/Desktop/PanoSQL/entry/src/main/ets/pages/TableBrowserPage.ets:43:27
+ 'getParams' has been deprecated.
+
+19 WARN: ArkTS:WARN File: D:/pano/Desktop/PanoSQL/entry/src/main/ets/pages/TableBrowserPage.ets:275:18
+ 'back' has been deprecated.
+
+> hvigor ERROR: 00305015 Rollup Error
+Error Message: Unexpected token (Note that you need plugins to import files that are not JavaScript)
+. At file: D:\pano\Desktop\PanoSQL\entry\src\main\ets\pages\Index.ets:264
+1 ERROR: 10605029 ArkTS Compiler Error
+Error Message: Indexed access is not supported for fields (arkts-no-props-by-index) At File: D:/pano/Desktop/PanoSQL/entry/src/main/ets/services/FileTransferService.ets:175:22
+
+
+2 ERROR: 10605099 ArkTS Compiler Error
+Error Message: It is possible to spread only arrays or classes derived from arrays into the rest parameter or array literals (arkts-no-spread) At File: D:/pano/Desktop/PanoSQL/entry/src/main/ets/services/PreferencesService.ets:117:7
+
+
+3 ERROR: 10605040 ArkTS Compiler Error
+Error Message: Object literals cannot be used as type declarations (arkts-no-obj-literals-as-types) At File: D:/pano/Desktop/PanoSQL/entry/src/main/ets/services/PreferencesService.ets:209:34
+
+
+4 ERROR: 10605038 ArkTS Compiler Error
+Error Message: Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals) At File: D:/pano/Desktop/PanoSQL/entry/src/main/ets/services/PreferencesService.ets:212:12
+
+
+5 ERROR: 10605142 ArkTS Compiler Error
+Error Message: "as const" assertions are not supported (arkts-no-as-const) At File: D:/pano/Desktop/PanoSQL/entry/src/main/ets/utils/Constants.ets:39:3
+
+
+6 ERROR: 10605038 ArkTS Compiler Error
+Error Message: Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals) At File: D:/pano/Desktop/PanoSQL/entry/src/main/ets/utils/Constants.ets:9:27
+
+
+7 ERROR: 10605038 ArkTS Compiler Error
+Error Message: Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals) At File: D:/pano/Desktop/PanoSQL/entry/src/main/ets/utils/Constants.ets:14:11
+
+
+8 ERROR: 10605038 ArkTS Compiler Error
+Error Message: Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals) At File: D:/pano/Desktop/PanoSQL/entry/src/main/ets/utils/Constants.ets:22:15
+
+
+9 ERROR: 10605038 ArkTS Compiler Error
+Error Message: Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals) At File: D:/pano/Desktop/PanoSQL/entry/src/main/ets/utils/Constants.ets:28:9
+
+
+10 ERROR: 10605038 ArkTS Compiler Error
+Error Message: Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals) At File: D:/pano/Desktop/PanoSQL/entry/src/main/ets/utils/Constants.ets:34:11
+
+
+11 ERROR: 10605142 ArkTS Compiler Error
+Error Message: "as const" assertions are not supported (arkts-no-as-const) At File: D:/pano/Desktop/PanoSQL/entry/src/main/ets/utils/Constants.ets:64:3
+
+
+12 ERROR: 10605142 ArkTS Compiler Error
+Error Message: "as const" assertions are not supported (arkts-no-as-const) At File: D:/pano/Desktop/PanoSQL/entry/src/main/ets/utils/Constants.ets:78:3
+
+
+13 ERROR: 10605142 ArkTS Compiler Error
+Error Message: "as const" assertions are not supported (arkts-no-as-const) At File: D:/pano/Desktop/PanoSQL/entry/src/main/ets/utils/Constants.ets:158:3
+
+
+14 ERROR: 10605038 ArkTS Compiler Error
+Error Message: Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals) At File: D:/pano/Desktop/PanoSQL/entry/src/main/ets/utils/Constants.ets:117:23
+
+
+15 ERROR: 10605142 ArkTS Compiler Error
+Error Message: "as const" assertions are not supported (arkts-no-as-const) At File: D:/pano/Desktop/PanoSQL/entry/src/main/ets/models/ColumnInfo.ets:35:3
+
+
+16 ERROR: 10605038 ArkTS Compiler Error
+Error Message: Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals) At File: D:/pano/Desktop/PanoSQL/entry/src/main/ets/models/ColumnInfo.ets:25:34
+
+
+17 ERROR: 10605028 ArkTS Compiler Error
+Error Message: Indexed access types are not supported (arkts-no-aliases-by-index) At File: D:/pano/Desktop/PanoSQL/entry/src/main/ets/models/ColumnInfo.ets:37:30
+
+
+18 ERROR: 10605060 ArkTS Compiler Error
+Error Message: "typeof" operator is allowed only in expression contexts (arkts-no-type-query) At File: D:/pano/Desktop/PanoSQL/entry/src/main/ets/models/ColumnInfo.ets:37:30
+
+
+19 ERROR: 10605060 ArkTS Compiler Error
+Error Message: "typeof" operator is allowed only in expression contexts (arkts-no-type-query) At File: D:/pano/Desktop/PanoSQL/entry/src/main/ets/models/ColumnInfo.ets:37:61
+
+
+20 ERROR: 10605040 ArkTS Compiler Error
+Error Message: Object literals cannot be used as type declarations (arkts-no-obj-literals-as-types) At File: D:/pano/Desktop/PanoSQL/entry/src/main/ets/services/DatabaseService.ets:16:39
+
+
+21 ERROR: 10605040 ArkTS Compiler Error
+Error Message: Object literals cannot be used as type declarations (arkts-no-obj-literals-as-types) At File: D:/pano/Desktop/PanoSQL/entry/src/main/ets/services/DatabaseService.ets:26:30
+
+
+22 ERROR: 10605008 ArkTS Compiler Error
+Error Message: Use explicit types instead of "any", "unknown" (arkts-no-any-unknown) At File: D:/pano/Desktop/PanoSQL/entry/src/main/ets/services/DatabaseService.ets:53:70
+
+
+23 ERROR: 10605038 ArkTS Compiler Error
+Error Message: Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals) At File: D:/pano/Desktop/PanoSQL/entry/src/main/ets/services/DatabaseService.ets:67:12
+
+
+24 ERROR: 10605038 ArkTS Compiler Error
+Error Message: Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals) At File: D:/pano/Desktop/PanoSQL/entry/src/main/ets/services/DatabaseService.ets:70:16
+
+
+25 ERROR: 10605043 ArkTS Compiler Error
+Error Message: Array literals must contain elements of only inferrable types (arkts-no-noninferrable-arr-literals) At File: D:/pano/Desktop/PanoSQL/entry/src/main/ets/services/DatabaseService.ets:80:17
+
+
+26 ERROR: 10605038 ArkTS Compiler Error
+Error Message: Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals) At File: D:/pano/Desktop/PanoSQL/entry/src/main/ets/services/DatabaseService.ets:81:13
+
+
+27 ERROR: 10605038 ArkTS Compiler Error
+Error Message: Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals) At File: D:/pano/Desktop/PanoSQL/entry/src/main/ets/services/DatabaseService.ets:82:13
+
+
+28 ERROR: 10605038 ArkTS Compiler Error
+Error Message: Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals) At File: D:/pano/Desktop/PanoSQL/entry/src/main/ets/services/DatabaseService.ets:138:16
+
+
+29 ERROR: 10605038 ArkTS Compiler Error
+Error Message: Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals) At File: D:/pano/Desktop/PanoSQL/entry/src/main/ets/services/SchemaService.ets:136:29
+
+
+30 ERROR: 10605074 ArkTS Compiler Error
+Error Message: Destructuring variable declarations are not supported (arkts-no-destruct-decls) At File: D:/pano/Desktop/PanoSQL/entry/src/main/ets/components/SchemaTree.ets:290:20
+
+
+31 ERROR: 10605038 ArkTS Compiler Error
+Error Message: Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals) At File: D:/pano/Desktop/PanoSQL/entry/src/main/ets/components/SchemaTree.ets:295:43
+
+
+32 ERROR: 10605038 ArkTS Compiler Error
+Error Message: Object literal must correspond to some explicitly declared class or interface (arkts-no-untyped-obj-literals) At File: D:/pano/Desktop/PanoSQL/entry/src/main/ets/components/SchemaTree.ets:333:43
+
+
+33 ERROR: 10605090 ArkTS Compiler Error
+Error Message: Function return type inference is limited (arkts-no-implicit-return-types) At File: D:/pano/Desktop/PanoSQL/entry/src/main/ets/pages/TableBrowserPage.ets:220:26
+
+
+34 ERROR: 10505001 ArkTS Compiler Error
+Error Message: No overload matches this call.
+  Overload 1 of 3, '(option?: DocumentSaveOptions): Promise<string[]>', gave the following error.
+    Argument of type '{ suggestedName: string; }' is not assignable to parameter of type 'DocumentSaveOptions'.
+      Object literal may only specify known properties, and 'suggestedName' does not exist in type 'DocumentSaveOptions'.
+  Overload 2 of 3, '(callback: AsyncCallback<string[], void>): void', gave the following error.
+    Argument of type '{ suggestedName: string; }' is not assignable to parameter of type 'AsyncCallback<string[], void>'.
+      Object literal may only specify known properties, and 'suggestedName' does not exist in type 'AsyncCallback<string[], void>'. At File: D:/pano/Desktop/PanoSQL/entry/src/main/ets/services/FileTransferService.ets:165:11
+
+
+35 ERROR: 10505001 ArkTS Compiler Error
+Error Message: Property 'length' does not exist on type 'Promise<string[]> & void'. At File: D:/pano/Desktop/PanoSQL/entry/src/main/ets/services/FileTransferService.ets:168:21
+
+
+36 ERROR: 10505001 ArkTS Compiler Error
+Error Message: Property 'set' does not exist on type 'Preferences'. At File: D:/pano/Desktop/PanoSQL/entry/src/main/ets/services/PreferencesService.ets:88:24
+
+
+37 ERROR: 10505001 ArkTS Compiler Error
+Error Message: Property 'set' does not exist on type 'Preferences'. At File: D:/pano/Desktop/PanoSQL/entry/src/main/ets/services/PreferencesService.ets:181:24
+
+
+38 ERROR: 10505001 ArkTS Compiler Error
+Error Message: Cannot find name 'Space'. At File: D:/pano/Desktop/PanoSQL/entry/src/main/ets/components/SchemaTree.ets:117:11
+
+
+39 ERROR: 10505001 ArkTS Compiler Error
+Error Message: Property 'getTextSelectionRange' does not exist on type 'TextAreaController'. Did you mean 'setTextSelection'? At File: D:/pano/Desktop/PanoSQL/entry/src/main/ets/components/SqlEditor.ets:163:80
+
+
+40 ERROR: 10505001 ArkTS Compiler Error
+Error Message: Argument of type 'ImageAttribute' is not assignable to parameter of type 'string | CustomBuilder | ComponentContent<Object>'.
+  Type 'ImageAttribute' is missing the following properties from type 'ComponentContent<Object>': update, recycle, dispose, updateConfiguration, and 2 more. At File: D:/pano/Desktop/PanoSQL/entry/src/main/ets/pages/TableBrowserPage.ets:278:11
+
+
+41 ERROR: 10905210 ArkTS Compiler Error
+Error Message: In an '@Entry' decorated component, the 'build' method can have only one root node, which must be a container component. At File: D:/pano/Desktop/PanoSQL/entry/src/main/ets/pages/Index.ets:164:12
+
+
+42 ERROR: 10903329 ArkTS Compiler Error
+Error Message: Unknown resource name 'icon_database'. At File: D:/pano/Desktop/PanoSQL/entry/src/main/ets/pages/Index.ets:279:16
+
+
+COMPILE RESULT:FAIL {ERROR:43 WARN:19}
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --debug option to get more log output.
+
+> hvigor ERROR: BUILD FAILED in 1 s 385 ms 
+
+进程已结束，退出代码为 -1
