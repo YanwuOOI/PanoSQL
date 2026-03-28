@@ -1,6 +1,6 @@
 /**
  * SqlEditor - SQL编辑器组件
- * MVP方案：使用TextArea + 行号显示
+ * MVP方案：使用TextArea + 行号显示 + SQL快捷工具栏
  * PanoDB Project
  */
 import { hilog } from '@kit.PerformanceAnalysisKit';
@@ -24,6 +24,9 @@ export struct SqlEditor {
     Column() {
       // 编辑器工具栏
       this.buildToolbar()
+
+      // SQL快捷工具栏
+      this.buildSqlToolbar()
 
       // 编辑器区域（行号 + TextArea）
       this.buildEditorArea()
@@ -89,6 +92,94 @@ export struct SqlEditor {
     .width('100%')
     .padding(8)
     .backgroundColor(COLORS.BG_BASE)
+  }
+
+  /**
+   * SQL快捷工具栏
+   * 提供常用SQL关键字的快捷按钮
+   */
+  @Builder
+  buildSqlToolbar() {
+    Scroll() {
+      Row() {
+        // SELECT组
+        this.buildSqlButton('SELECT', 'SELECT ')
+        this.buildSqlButton('FROM', 'FROM ')
+        this.buildSqlButton('WHERE', 'WHERE ')
+        this.buildSqlButton('AND', ' AND ')
+        this.buildSqlButton('OR', ' OR ')
+
+        Divider()
+          .vertical(true)
+          .height(16)
+          .color(COLORS.BORDER_DEFAULT)
+          .margin({ left: 8, right: 8 })
+
+        // DML组
+        this.buildSqlButton('INSERT', 'INSERT ')
+        this.buildSqlButton('UPDATE', 'UPDATE ')
+        this.buildSqlButton('DELETE', 'DELETE ')
+
+        Divider()
+          .vertical(true)
+          .height(16)
+          .color(COLORS.BORDER_DEFAULT)
+          .margin({ left: 8, right: 8 })
+
+        // JOIN组
+        this.buildSqlButton('JOIN', 'JOIN ')
+        this.buildSqlButton('LEFT', 'LEFT ')
+        this.buildSqlButton('RIGHT', 'RIGHT ')
+        this.buildSqlButton('INNER', 'INNER ')
+        this.buildSqlButton('OUTER', 'OUTER ')
+
+        Divider()
+          .vertical(true)
+          .height(16)
+          .color(COLORS.BORDER_DEFAULT)
+          .margin({ left: 8, right: 8 })
+
+        // ORDER组
+        this.buildSqlButton('ORDER BY', 'ORDER BY ')
+        this.buildSqlButton('GROUP BY', 'GROUP BY ')
+        this.buildSqlButton('HAVING', 'HAVING ')
+        this.buildSqlButton('LIMIT', 'LIMIT ')
+
+        Divider()
+          .vertical(true)
+          .height(16)
+          .color(COLORS.BORDER_DEFAULT)
+          .margin({ left: 8, right: 8 })
+
+        // 其他
+        this.buildSqlButton('ON', ' ON ')
+        this.buildSqlButton('AS', ' AS ')
+        this.buildSqlButton('INTO', 'INTO ')
+        this.buildSqlButton('VALUES', 'VALUES ')
+        this.buildSqlButton('SET', 'SET ')
+      }
+      .padding({ left: 8, right: 8, top: 4, bottom: 4 })
+    }
+    .width('100%')
+    .scrollable(ScrollDirection.Horizontal)
+    .scrollBar(BarState.Auto)
+    .backgroundColor(COLORS.BG_BASE)
+    .borderWidth({ top: 1, bottom: 1 })
+    .borderColor(COLORS.BORDER_DEFAULT)
+  }
+
+  /**
+   * 构建SQL快捷按钮
+   */
+  @Builder
+  buildSqlButton(label: string, insertText: string) {
+    Button(label)
+      .fontSize(11)
+      .fontColor(COLORS.SQL_KEYWORD)
+      .backgroundColor('transparent')
+      .borderRadius(4)
+      .padding({ left: 6, right: 6, top: 3, bottom: 3 })
+      .onClick(() => this.insertText(insertText))
   }
 
   @Builder
@@ -202,7 +293,7 @@ export struct SqlEditor {
   }
 
   /**
-   * 插入文本到光标位置
+   * 插入文本到编辑器末尾
    */
   insertText(text: string) {
     this.sqlText += text;
