@@ -9,6 +9,83 @@ import { COLORS } from '../utils/Constants';
 
 const DOMAIN = 0xFF11;
 
+/**
+ * 简单的撤销/重做管理器
+ */
+class UndoManager {
+  private history: string[] = [];
+  private currentIndex: number = -1;
+  private maxSize: number = 50;
+
+  /**
+   * 添加历史记录
+   */
+  push(text: string): void {
+    // 如果当前不在历史末尾，先截断
+    if (this.currentIndex < this.history.length - 1) {
+      this.history = this.history.slice(0, this.currentIndex + 1);
+    }
+
+    // 避免重复
+    if (this.history.length > 0 && this.history[this.history.length - 1] === text) {
+      return;
+    }
+
+    this.history.push(text);
+    this.currentIndex = this.history.length - 1;
+
+    // 限制历史大小
+    if (this.history.length > this.maxSize) {
+      this.history.shift();
+      this.currentIndex--;
+    }
+  }
+
+  /**
+   * 是否可撤销
+   */
+  canUndo(): boolean {
+    return this.currentIndex > 0;
+  }
+
+  /**
+   * 是否可重做
+   */
+  canRedo(): boolean {
+    return this.currentIndex < this.history.length - 1;
+  }
+
+  /**
+   * 撤销
+   */
+  undo(): string | null {
+    if (!this.canUndo()) {
+      return null;
+    }
+    this.currentIndex--;
+    return this.history[this.currentIndex];
+  }
+
+  /**
+   * 重做
+   */
+  redo(): string | null {
+    if (!this.canRedo()) {
+      return null;
+    }
+    this.currentIndex++;
+    return this.history[this.currentIndex];
+  }
+
+  /**
+   * 清空历史
+   */
+  clear(): void {
+    this.history = [];
+    this.currentIndex = -1;
+  }
+}
+
 @Component
 export struct SqlEditor {
   @Link sqlText: string;
@@ -19,6 +96,7 @@ export struct SqlEditor {
 
   onExecute?: (sql: string) => void;
   private textAreaController: TextAreaController = new TextAreaController();
+  private undoManager: UndoManager = new UndoManager();
 
   build() {
     Column() {
@@ -72,6 +150,32 @@ export struct SqlEditor {
         .padding({ left: 12, right: 12, top: 6, bottom: 6 })
         .margin({ left: 8 })
         .onClick(() => this.clear())
+
+      Divider()
+        .vertical(true)
+        .height(20)
+        .color(COLORS.BORDER_DEFAULT)
+        .margin({ left: 8, right: 8 })
+
+      // 撤销按钮
+      Button('↩')
+        .fontSize(14)
+        .fontColor(COLORS.TEXT_SECONDARY)
+        .backgroundColor('transparent')
+        .borderRadius(4)
+        .width(32)
+        .height(32)
+        .onClick(() => this.undo())
+
+      // 重做按钮
+      Button('↪')
+        .fontSize(14)
+        .fontColor(COLORS.TEXT_SECONDARY)
+        .backgroundColor('transparent')
+        .borderRadius(4)
+        .width(32)
+        .height(32)
+        .onClick(() => this.redo())
 
       Blank()
 
@@ -224,6 +328,7 @@ export struct SqlEditor {
         .onChange((value: string) => {
           this.sqlText = value;
           this.updateLineNumbers(value);
+          this.undoManager.push(value);
         })
     }
     .width('100%')
@@ -273,6 +378,7 @@ export struct SqlEditor {
     const formatted = QueryService.formatSql(this.sqlText);
     this.sqlText = formatted;
     this.updateLineNumbers(formatted);
+    this.undoManager.clear();
   }
 
   /**
@@ -283,6 +389,39 @@ export struct SqlEditor {
     this.lineNumbers = [1];
     this.cursorLine = 1;
     this.cursorColumn = 1;
+    this.undoManager.clear();
+  }
+
+  /**
+   * 撤销
+   */
+  undo() {
+    try {
+      const prevText = this.undoManager.undo();
+      if (prevText !== null) {
+        this.sqlText = prevText;
+        this.updateLineNumbers(prevText);
+        hilog.info(DOMAIN, 'SqlEditor', 'Undo performed');
+      }
+    } catch (error) {
+      hilog.warn(DOMAIN, 'SqlEditor', 'Undo failed: %{public}s', JSON.stringify(error));
+    }
+  }
+
+  /**
+   * 重做
+   */
+  redo() {
+    try {
+      const nextText = this.undoManager.redo();
+      if (nextText !== null) {
+        this.sqlText = nextText;
+        this.updateLineNumbers(nextText);
+        hilog.info(DOMAIN, 'SqlEditor', 'Redo performed');
+      }
+    } catch (error) {
+      hilog.warn(DOMAIN, 'SqlEditor', 'Redo failed: %{public}s', JSON.stringify(error));
+    }
   }
 
   /**

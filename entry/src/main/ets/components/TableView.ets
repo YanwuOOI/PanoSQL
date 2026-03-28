@@ -71,7 +71,7 @@ export struct TableView {
 
   private onRowClick?: (row: TableRow, index: number) => void;
   private onDataChange?: (hasChanges: boolean) => void;
-  private onSaveRequestFn?: (sqls: string[]) => void;
+  onSaveRequestFn?: (sqls: string[]) => void;
   private scroller: Scroller = new Scroller();
   private editInputController: TextInputController = new TextInputController();
 
