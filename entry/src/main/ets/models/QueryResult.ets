@@ -7,13 +7,20 @@
  * 表格行数据实现类
  */
 export class TableRowImpl {
-  private data: Record<string, string | null> = {};
+  private data: Record<string, string | number | null> = {};
 
-  setValue(key: string, value: string | null): void {
-    this.data[key] = value;
+  setValue(key: string, value: string | number | null): void {
+    // 将所有值转换为字符串以便存储
+    if (value === null || value === undefined) {
+      this.data[key] = null;
+    } else if (typeof value === 'number') {
+      this.data[key] = value;
+    } else {
+      this.data[key] = value;
+    }
   }
 
-  getValue(key: string): string | null {
+  getValue(key: string): string | number | null {
     return this.data[key] ?? null;
   }
 
@@ -50,7 +57,7 @@ export type SqlExecutionResult = QueryResult;
 /**
  * 获取单元格值
  */
-export function getCellValue(row: TableRow, column: string): string | null {
+export function getCellValue(row: TableRow, column: string): string | number | null {
   if (row instanceof TableRowImpl) {
     return row.getValue(column);
   }

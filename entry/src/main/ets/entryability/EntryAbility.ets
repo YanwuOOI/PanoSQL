@@ -8,6 +8,7 @@ import { hilog } from '@kit.PerformanceAnalysisKit';
 import { window } from '@kit.ArkUI';
 import FileTransferService from '../services/FileTransferService';
 import PreferencesService from '../services/PreferencesService';
+import DatabaseService from '../services/DatabaseService';
 import { AppConfig } from '../utils/Constants';
 
 const DOMAIN = 0x0000;
@@ -82,6 +83,10 @@ export default class EntryAbility extends UIAbility {
       // 初始化PreferencesService
       await PreferencesService.init(this.context);
       hilog.info(DOMAIN, 'EntryAbility', 'PreferencesService initialized');
+
+      // 初始化DatabaseService
+      await DatabaseService.init(this.context);
+      hilog.info(DOMAIN, 'EntryAbility', 'DatabaseService initialized');
     } catch (error) {
       hilog.error(DOMAIN, 'EntryAbility', 'Failed to init services: %{public}s',
         JSON.stringify(error));

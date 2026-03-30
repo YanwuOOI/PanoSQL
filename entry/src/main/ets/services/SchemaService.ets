@@ -17,7 +17,8 @@ const DOMAIN = 0xFF03;
  */
 function getSqlFromRow(row: TableRow): string | null {
   if (row instanceof TableRowImpl) {
-    return row.getValue('sql');
+    const value = row.getValue('sql');
+    return typeof value === 'string' ? value : null;
   }
   return null;
 }
@@ -38,9 +39,12 @@ class SchemaService {
    * 获取完整数据库Schema
    */
   async getDatabaseSchema(): Promise<DatabaseSchema> {
-    const db = DatabaseService.getCurrentDatabase();
-    if (!db) {
-      throw new Error('No database is currently open');
+    const dbPath = DatabaseService.getCurrentDatabase();
+    if (!dbPath) {
+      hilog.error(DOMAIN, 'SchemaService', 'No database is currently open');
+      const schema = new DatabaseSchema();
+      schema.databaseName = '';
+      return schema;
     }
 
     // 获取所有表和视图
@@ -62,7 +66,7 @@ class SchemaService {
     const indexes = await DatabaseService.getIndexes();
 
     const schema = new DatabaseSchema();
-    schema.databaseName = this.extractDbName(db.path);
+    schema.databaseName = this.extractDbName(dbPath);
     schema.tables = tables;
     schema.views = views;
     schema.indexes = indexes;

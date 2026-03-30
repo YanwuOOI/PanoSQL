@@ -596,7 +596,9 @@ export struct TableView {
    */
   private startCellEdit(row: TableRow, rowIndex: number, column: string): void {
     const value = getCellValue(row, column);
-    this.editState.startEdit(rowIndex, column, value);
+    // 将 string | number | null 转换为 string | null
+    const strValue = typeof value === 'string' ? value : (value === null ? null : String(value));
+    this.editState.startEdit(rowIndex, column, strValue);
   }
 
   /**
@@ -620,7 +622,8 @@ export struct TableView {
       const change = changeInfo.changes.get(col);
       return this.formatCellValue(change?.newValue ?? null);
     }
-    return this.formatCellValue(getCellValue(row, col));
+    const val = getCellValue(row, col);
+    return this.formatCellValue(typeof val === 'string' ? val : (val === null ? null : String(val)));
   }
 
   /**
@@ -646,7 +649,8 @@ export struct TableView {
     if (isDeleted) {
       return COLORS.TEXT_MUTED;
     }
-    return this.formatCellColor(getCellValue(row, col));
+    const val = getCellValue(row, col);
+    return this.formatCellColor(typeof val === 'string' ? val : (val === null ? null : String(val)));
   }
 
   /**
@@ -766,7 +770,8 @@ export struct TableView {
         const rowData = new Map<string, string | null>();
         for (let j = 0; j < this.columns.length; j++) {
           const col = this.columns[j];
-          rowData.set(col, getCellValue(row, col));
+          const val = getCellValue(row, col);
+          rowData.set(col, typeof val === 'string' ? val : (val === null ? null : String(val)));
         }
         const updateSql = this.editState.generateUpdateSql(this.tableName, this.columns, rowData, rowIndex);
         if (updateSql) {
@@ -783,7 +788,8 @@ export struct TableView {
         const rowData = new Map<string, string | null>();
         for (let j = 0; j < this.columns.length; j++) {
           const col = this.columns[j];
-          rowData.set(col, getCellValue(row, col));
+          const val = getCellValue(row, col);
+          rowData.set(col, typeof val === 'string' ? val : (val === null ? null : String(val)));
         }
         const deleteSql = this.editState.generateDeleteSql(this.tableName, this.columns, rowData, rowIndex);
         sqls.push(deleteSql);
