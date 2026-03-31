@@ -88,11 +88,55 @@
 - 更多关键字支持 (INTERSECT, EXCEPT, REPLACE INTO, CAST, COALESCE 等)
 - 多字关键字优先匹配
 
+#### CSV/JSON 导出 ✅ 已实现
+
+**已有组件**:
+- `ExportDialog.ets` - 导出对话框
+- `QueryService.exportAsJson/Csv/Sql()` - 导出方法
+- `TableBrowserPage` 已集成导出按钮
+
+#### 最近打开列表 ✅ 已实现
+
+**已有组件**:
+- `PreferencesService.ets` - 最近数据库存储
+- `Index.ets` 已集成最近列表显示
+
+---
+
+### Phase 2 完成 🎉
+
+**时间**: 2026-03-31
+
+**完成功能**:
+- ✅ getColumns() 修复
+- ✅ 数据编辑（insert/update/delete）
+- ✅ SQL 格式化增强
+- ✅ CSV/JSON/SQL 导出
+- ✅ 最近打开列表
+
+### Phase 3 进行中
+
+**时间**: 2026-03-31
+
+**完成功能**:
+
+- ✅ SQL 语法高亮 (Web 组件方案)
+  - `sql_editor.html` - CSS 语法高亮（关键字紫色、函数粉色、字符串青色等）
+  - `WebSqlEditor.ets` - ArkTS Web 组件封装
+  - `TableBrowserPage.ets` - 已集成 WebSqlEditor
+
+**Web 方案特点**:
+- 使用本地 rawfile HTML，无需网络权限
+- 支持 SQL 关键字、函数、字符串、数字、注释着色
+- 行号显示、Tab 键缩进支持
+- postMessage 与 ArkTS 通信
+
 ### 遗留问题
 
-- getColumns() 返回空数组 ⚠️ 已修复
-- SQL 无语法高亮
-- GitHub push 认证未配置
+- Web 编辑器文本同步（当前单向 ArkTS → Web）
+- 撤销/重做功能（Web 版本未实现，TextArea 版本有）
+- UI 美化
+- 自由窗口适配
 
 ---
 
