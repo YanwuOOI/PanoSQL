@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>SQL Editor</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+      font-size: 14px;
+      background-color: #1a1a1a;
+      color: #e5e5e5;
+    }
+    #editor-container {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+    #line-numbers {
+      width: 48px;
+      background-color: #141414;
+      color: #71717a;
+      font-size: 13px;
+      line-height: 1.5;
+      padding: 8px 8px 8px 0;
+      text-align: right;
+      overflow: hidden;
+      user-select: none;
+      flex-shrink: 0;
+    }
+    #editor-wrapper {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+      position: relative;
+    }
+    #code-editor {
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      background-color: #1a1a1a;
+      color: #e5e5e5;
+      border: none;
+      outline: none;
+      font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+      font-size: 14px;
+      line-height: 1.5;
+      padding: 8px;
+      resize: none;
+      white-space: pre;
+      overflow: auto;
+      tab-size: 4;
+    }
+    #highlight-layer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 8px;
+      font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+      font-size: 14px;
+      line-height: 1.5;
+      white-space: pre;
+      pointer-events: none;
+      overflow: hidden;
+      color: transparent;
+    }
+    .sql-keyword { color: #c084fc; font-weight: bold; }
+    .sql-function { color: #f472b6; }
+    .sql-string { color: #22d3ee; }
+    .sql-number { color: #fbbf24; }
+    .sql-operator { color: #fb923c; }
+    .sql-comment { color: #6b7280; font-style: italic; }
+    .sql-table { color: #60a5fa; }
+  </style>
+</head>
+<body>
+  <div id="editor-container">
+    <div id="editor-wrapper">
+      <div id="line-numbers">1</div>
+      <div id="highlight-layer"></div>
+      <textarea id="code-editor" spellcheck="false"></textarea>
+    </div>
+  </div>
+
+  <script>
+    // SQL keywords and colors
+    const SQL_KEYWORDS = [
+      'SELECT', 'FROM', 'WHERE', 'AND', 'OR', 'ORDER BY', 'GROUP BY', 'HAVING',
+      'LIMIT', 'OFFSET', 'AS', 'DISTINCT', 'ALL', 'ANY', 'EXISTS', 'BETWEEN',
+      'LIKE', 'IN', 'IS NULL', 'IS NOT NULL', 'CASE', 'WHEN', 'THEN', 'ELSE', 'END',
+      'UNION', 'UNION ALL', 'INTERSECT', 'EXCEPT',
+      'INSERT INTO', 'VALUES', 'UPDATE', 'SET', 'DELETE FROM',
+      'REPLACE INTO', 'ON DUPLICATE KEY UPDATE',
+      'CREATE TABLE', 'CREATE INDEX', 'CREATE VIEW', 'ALTER TABLE', 'DROP TABLE',
+      'ADD COLUMN', 'DROP COLUMN', 'MODIFY COLUMN',
+      'PRIMARY KEY', 'FOREIGN KEY', 'REFERENCES', 'NOT NULL', 'UNIQUE', 'DEFAULT',
+      'CHECK', 'CONSTRAINT', 'INDEX', 'IF NOT EXISTS', 'IF EXISTS',
+      'JOIN', 'LEFT JOIN', 'RIGHT JOIN', 'INNER JOIN', 'OUTER JOIN', 'CROSS JOIN',
+      'FULL OUTER JOIN', 'NATURAL JOIN', 'ON', 'USING',
+      'BEGIN', 'COMMIT', 'ROLLBACK', 'SAVEPOINT',
+      'WITH', 'RECURSIVE', 'NULL', 'TRUE', 'FALSE', 'CAST', 'COALESCE', 'IF', 'IIF'
+    ];
+
+    const SQL_FUNCTIONS = [
+      'COUNT', 'SUM', 'AVG', 'MIN', 'MAX', 'COALESCE', 'IFNULL', 'NULLIF',
+      'LENGTH', 'UPPER', 'LOWER', 'TRIM', 'SUBSTR', 'SUBSTRING',
+      'REPLACE', 'INSTR', 'ABS', 'ROUND', 'DATE', 'TIME', 'DATETIME',
+      'GROUP_CONCAT', 'TOTAL', 'IF', 'IIF'
+    ];
+
+    // Escape HTML
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // Highlight SQL code
+    function highlightSql(code) {
+      if (!code || code.trim() === '') {
+        return '';
+      }
+
+      // Protect strings first
+      const strings = [];
+      let result = code.replace(/'[^']*'/g, (match) => {
+        strings.push(match);
+        return `__STRING_${strings.length - 1}__`;
+      });
+
+      // Protect comments
+      result = result.replace(/--[^\n]*/g, (match) => {
+        return `<span class="sql-comment">${escapeHtml(match)}</span>`;
+      });
+
+      // Highlight strings
+      for (let i = 0; i < strings.length; i++) {
+        result = result.replace(`__STRING_${i}__`, `<span class="sql-string">${escapeHtml(strings[i])}</span>`);
+      }
+
+      // Highlight numbers
+      result = result.replace(/\b\d+\.?\d*\b/g, '<span class="sql-number">$&</span>');
+
+      // Highlight keywords (longest first)
+      const allKeywords = [...SQL_KEYWORDS, ...SQL_FUNCTIONS];
+      allKeywords.sort((a, b) => b.length - a.length);
+
+      for (const keyword of allKeywords) {
+        const regex = new RegExp(`\\b(${keyword})\\b`, 'gi');
+        const cssClass = SQL_KEYWORDS.includes(keyword.toUpperCase()) ? 'sql-keyword' : 'sql-function';
+        result = result.replace(regex, `<span class="${cssClass}">$${keyword.toUpperCase()}</span>`);
+      }
+
+      return result;
+    }
+
+    // Update line numbers
+    function updateLineNumbers() {
+      const code = document.getElementById('code-editor').value;
+      const lines = code.split('\n').length;
+      const lineNumbers = [];
+      for (let i = 1; i <= Math.max(lines, 1); i++) {
+        lineNumbers.push(i);
+      }
+      document.getElementById('line-numbers').innerHTML = lineNumbers.join('<br>');
+    }
+
+    // Sync scroll
+    function syncScroll() {
+      const editor = document.getElementById('code-editor');
+      const highlight = document.getElementById('highlight-layer');
+      const lineNumbers = document.getElementById('line-numbers');
+      highlight.scrollTop = editor.scrollTop;
+      highlight.scrollLeft = editor.scrollLeft;
+      lineNumbers.scrollTop = editor.scrollTop;
+    }
+
+    // Get highlighted HTML
+    function getHighlightedCode() {
+      const code = document.getElementById('code-editor').value;
+      return highlightSql(code);
+    }
+
+    // Initialize
+    const editor = document.getElementById('code-editor');
+    const highlightLayer = document.getElementById('highlight-layer');
+
+    editor.addEventListener('input', () => {
+      updateLineNumbers();
+      highlightLayer.innerHTML = highlightSql(editor.value) + '\n';
+    });
+
+    editor.addEventListener('scroll', syncScroll);
+    editor.addEventListener('keydown', (e) => {
+      if (e.key === 'Tab') {
+        e.preventDefault();
+        const start = editor.selectionStart;
+        const end = editor.selectionEnd;
+        editor.value = editor.value.substring(0, start) + '    ' + editor.value.substring(end);
+        editor.selectionStart = editor.selectionEnd = start + 4;
+        editor.dispatchEvent(new Event('input'));
+      }
+    });
+
+    updateLineNumbers();
+
+    // Handle messages from ArkTS
+    window.addEventListener('message', (event) => {
+      const data = event.data;
+      if (data.type === 'setText') {
+        editor.value = data.text || '';
+        highlightLayer.innerHTML = highlightSql(editor.value) + '\n';
+        updateLineNumbers();
+      } else if (data.type === 'getText') {
+        window.parent.postMessage({ type: 'textResult', text: editor.value }, '*');
+      } else if (data.type === 'clear') {
+        editor.value = '';
+        highlightLayer.innerHTML = '';
+        updateLineNumbers();
+      } else if (data.type === 'getHighlightedHtml') {
+        window.parent.postMessage({ type: 'highlightedResult', html: getHighlightedCode() }, '*');
+      }
+    });
+
+    // Notify ready
+    window.parent.postMessage({ type: 'ready' }, '*');
+  </script>
+</body>
+</html>

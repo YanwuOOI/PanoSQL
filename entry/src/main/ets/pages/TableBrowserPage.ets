@@ -7,6 +7,7 @@ import { hilog } from '@kit.PerformanceAnalysisKit';
 import router from '@ohos.router';
 import { SchemaTree } from '../components/SchemaTree';
 import { SqlEditor } from '../components/SqlEditor';
+import { WebSqlEditor } from '../components/WebSqlEditor';
 import { TableView } from '../components/TableView';
 import { StatusBar } from '../components/StatusBar';
 import { ExportDialog } from '../components/ExportDialog';
@@ -274,7 +275,7 @@ struct TableBrowserPage {
           Column() {
             // SQL编辑器
             Column() {
-              SqlEditor({
+              WebSqlEditor({
                 sqlText: $sqlText,
                 onExecute: (sql: string) => {
                   this.executeSql(sql);
