@@ -150,7 +150,65 @@ await this.store.executeSql(`PRAGMA table_info('${tableName}')`);
 
 ---
 
+## Phase 2: 数据编辑功能
+
+### 现状分析
+
+#### 已实现组件
+
+| 组件 | 文件 | 状态 |
+|------|------|------|
+| TableView | `components/TableView.ets` | ✅ 已支持编辑UI |
+| TableEditState | `models/TableEditState.ets` | ✅ SQL生成逻辑 |
+| DatabaseService | `services/DatabaseService.ets` | ⚠️ 缺少 update/delete |
+| TableBrowserPage | `pages/TableBrowserPage.ets` | ✅ executeEditSqls() |
+
+#### TableView 编辑功能
+```typescript
+// 已有按钮和回调
+- 新增行 (insertRow)
+- 删除行 (confirmDelete)
+- 保存更改 (saveChanges)
+- 放弃更改 (discardChanges)
+
+// 回调
+setOnSaveRequest(callback: (sqls: string[]) => void)
+```
+
+#### DatabaseService 数据操作现状
+
+| 方法 | 签名 | 状态 |
+|------|------|------|
+| `insert` | `insert(table, data)` | ✅ 已实现 |
+| `update` | - | ❌ 缺失 |
+| `delete` | - | ❌ 缺失 |
+| `executeSql` | `executeSql(sql)` | ✅ 已实现 |
+
+### 需要实现
+
+#### 1. DatabaseService.update() 方法
+```typescript
+async update(table: string, data: Record<string, string | number | null>, where: string): Promise<number>
+```
+- 使用 RDB Store API 的 `update()` 方法
+- 通过 RdbPredicates 构建 WHERE 条件
+
+#### 2. DatabaseService.delete() 方法
+```typescript
+async delete(table: string, where: string): Promise<number>
+```
+- 使用 RDB Store API 的 `delete()` 方法
+
+### 实施步骤
+
+1. 在 `DatabaseService.ets` 添加 `update()` 方法
+2. 在 `DatabaseService.ets` 添加 `delete()` 方法
+3. 验证编译通过
+
+---
+
 ## 更新日志
 
+- 2026-03-31: 分析数据编辑功能现状，制定实现计划
 - 2026-03-31: 深入分析 getColumns() 和 SQL 语法高亮方案
 - 2026-03-30: 初始化研究发现

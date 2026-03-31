@@ -69,9 +69,28 @@
 
 **时间**: 2026-03-31
 
+#### 数据编辑功能 ✅ 完成
+
+**新增方法**:
+- `DatabaseService.update()` - 更新数据
+- `DatabaseService.delete()` - 删除数据
+
+**实现说明**:
+- 使用原始 SQL + `executeSql()` 实现（避免 RDB Store API 类型问题）
+- 支持简单的 WHERE 条件
+- 限制：不支持复杂 WHERE 条件（如 OR、LIKE、IN 等）
+
+#### SQL 格式化增强 ✅ 完成
+
+**增强内容**:
+- 字符串和注释保护
+- 关键字大写统一
+- 更多关键字支持 (INTERSECT, EXCEPT, REPLACE INTO, CAST, COALESCE 等)
+- 多字关键字优先匹配
+
 ### 遗留问题
 
-- getColumns() 返回空数组
+- getColumns() 返回空数组 ⚠️ 已修复
 - SQL 无语法高亮
 - GitHub push 认证未配置
 

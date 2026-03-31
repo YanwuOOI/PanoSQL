@@ -37,36 +37,87 @@ class QueryService {
 
   /**
    * 格式化SQL语句
+   * 支持关键字大写、缩进、字符串保护
    */
   formatSql(sql: string): string {
     if (!sql || sql.trim().length === 0) {
       return '';
     }
 
-    // 转换为大写进行关键字匹配
-    const upperSql = sql.toUpperCase();
-    let formatted = sql;
+    // 第一步：保护字符串和注释
+    const protectedParts: string[] = [];
+    let protectedIndex = 0;
+
+    // 保护单引号字符串
+    let result = sql.replace(/'([^']*)'/g, (match) => {
+      protectedParts.push(match);
+      return `__PROTECTED_${protectedIndex++}__`;
+    });
+
+    // 保护双引号字符串
+    result = result.replace(/"([^"]*)"/g, (match) => {
+      protectedParts.push(match);
+      return `__PROTECTED_${protectedIndex++}__`;
+    });
+
+    // 保护注释
+    result = result.replace(/--[^\n]*/g, (match) => {
+      protectedParts.push(match);
+      return `__PROTECTED_${protectedIndex++}__`;
+    });
+    result = result.replace(/\/\*[^*]*\*\//g, (match) => {
+      protectedParts.push(match);
+      return `__PROTECTED_${protectedIndex++}__`;
+    });
+
+    // 关键字列表（按优先级排序，长的在前）
     const keywords = [
+      // DQL
       'SELECT', 'FROM', 'WHERE', 'AND', 'OR', 'ORDER BY', 'GROUP BY', 'HAVING',
-      'LIMIT', 'OFFSET', 'INSERT INTO', 'VALUES', 'UPDATE', 'SET', 'DELETE FROM',
-      'CREATE TABLE', 'ALTER TABLE', 'DROP TABLE', 'JOIN', 'LEFT JOIN', 'RIGHT JOIN',
-      'INNER JOIN', 'OUTER JOIN', 'CROSS JOIN', 'ON', 'UNION', 'UNION ALL',
+      'LIMIT', 'OFFSET', 'AS', 'DISTINCT', 'ALL', 'ANY', 'SOME', 'EXISTS', 'BETWEEN',
+      'LIKE', 'IN', 'IS NULL', 'IS NOT NULL', 'CASE', 'WHEN', 'THEN', 'ELSE', 'END',
+      'UNION', 'UNION ALL', 'INTERSECT', 'EXCEPT',
+      // DML
+      'INSERT INTO', 'VALUES', 'UPDATE', 'SET', 'DELETE FROM',
+      'REPLACE INTO', 'IGNORE', 'ON DUPLICATE KEY UPDATE',
+      // DDL
+      'CREATE TABLE', 'CREATE INDEX', 'CREATE VIEW', 'CREATE TRIGGER',
+      'ALTER TABLE', 'DROP TABLE', 'DROP INDEX', 'DROP VIEW', 'DROP TRIGGER',
+      'ADD COLUMN', 'DROP COLUMN', 'MODIFY COLUMN', 'RENAME TO',
       'PRIMARY KEY', 'FOREIGN KEY', 'REFERENCES', 'NOT NULL', 'UNIQUE', 'DEFAULT',
-      'CHECK', 'EXISTS', 'IF NOT EXISTS', 'IF EXISTS', 'AS', 'CASE', 'WHEN', 'THEN', 'ELSE', 'END',
-      'BEGIN', 'COMMIT', 'ROLLBACK', 'TRANSACTION', 'WITH', 'RECURSIVE'
+      'CHECK', 'CONSTRAINT', 'INDEX', 'VIEW', 'TRIGGER',
+      'IF NOT EXISTS', 'IF EXISTS', 'AUTO_INCREMENT', 'UNSIGNED', 'ZEROFILL',
+      // Join
+      'JOIN', 'LEFT JOIN', 'RIGHT JOIN', 'INNER JOIN', 'OUTER JOIN', 'CROSS JOIN',
+      'FULL OUTER JOIN', 'NATURAL JOIN', 'LEFT OUTER JOIN', 'RIGHT OUTER JOIN',
+      'ON', 'USING',
+      // Transaction
+      'BEGIN', 'COMMIT', 'ROLLBACK', 'SAVEPOINT', 'RELEASE SAVEPOINT',
+      'TRANSACTION', 'START TRANSACTION',
+      // CTE
+      'WITH', 'RECURSIVE',
+      // Other
+      'NULL', 'TRUE', 'FALSE', 'CAST', 'COALESCE', 'IFNULL', 'IF', 'IIF'
     ];
 
-    // 在关键字前添加换行和缩进
+    // 在关键字前后添加换行（保持原始大小写）
     for (const keyword of keywords) {
-      const regex = new RegExp(`\\b${keyword}\\b`, 'gi');
-      formatted = formatted.replace(regex, '\n' + keyword);
+      // 创建一个匹配原始大小写的关键字正则
+      const escapedKeyword = keyword.replace(/ /g, '\\s+');
+      const regex = new RegExp(`\\b(${escapedKeyword})\\b`, 'gi');
+      result = result.replace(regex, '\n' + keyword.toUpperCase());
     }
 
     // 清理多余的换行
-    formatted = formatted.replace(/\n+/g, '\n').trim();
+    result = result.replace(/\n+/g, '\n').trim();
+
+    // 恢复被保护的部分
+    for (let i = 0; i < protectedParts.length; i++) {
+      result = result.replace(`__PROTECTED_${i}__`, protectedParts[i]);
+    }
 
     // 添加缩进
-    const lines = formatted.split('\n');
+    const lines = result.split('\n');
     let indentLevel = 0;
     const indentedLines = lines.map(line => {
       const trimmedLine = line.trim();
@@ -75,8 +126,8 @@ class QueryService {
       }
 
       // 减少缩进的关键字
-      const outdentKeywords = ['END', 'ELSE', 'UNION', 'UNION ALL'];
-      const shouldOutdent = outdentKeywords.some(kw => trimmedLine.startsWith(kw));
+      const outdentKeywords = ['END', 'ELSE', 'UNION', 'UNION ALL', 'INTERSECT', 'EXCEPT'];
+      const shouldOutdent = outdentKeywords.some(kw => trimmedLine.toUpperCase().startsWith(kw));
 
       if (shouldOutdent && indentLevel > 0) {
         indentLevel--;
@@ -85,11 +136,15 @@ class QueryService {
       const indentedLine = '  '.repeat(indentLevel) + trimmedLine;
 
       // 增加缩进的关键字
-      const indentKeywords = ['SELECT', 'FROM', 'WHERE', 'AND', 'OR', 'SET', 'VALUES',
+      const indentKeywords = [
+        'SELECT', 'FROM', 'WHERE', 'AND', 'OR', 'SET', 'VALUES',
         'JOIN', 'LEFT JOIN', 'RIGHT JOIN', 'INNER JOIN', 'OUTER JOIN', 'CROSS JOIN',
+        'FULL OUTER JOIN', 'NATURAL JOIN', 'LEFT OUTER JOIN', 'RIGHT OUTER JOIN',
         'ORDER BY', 'GROUP BY', 'HAVING', 'LIMIT', 'OFFSET',
-        'INSERT INTO', 'UPDATE', 'DELETE FROM', 'BEGIN', 'CASE', 'WHEN', 'THEN'];
-      const shouldIndent = indentKeywords.some(kw => trimmedLine.startsWith(kw));
+        'INSERT INTO', 'UPDATE', 'DELETE FROM', 'REPLACE INTO',
+        'BEGIN', 'CASE', 'WHEN', 'THEN', 'WITH', 'RECURSIVE'
+      ];
+      const shouldIndent = indentKeywords.some(kw => trimmedLine.toUpperCase().startsWith(kw));
 
       if (shouldIndent && !shouldOutdent) {
         indentLevel++;

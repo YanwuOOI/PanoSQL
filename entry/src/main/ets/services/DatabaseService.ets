@@ -380,6 +380,76 @@ class DatabaseService {
     }
   }
 
+  /**
+   * 更新数据
+   * @param table 表名
+   * @param data 要更新的字段和值
+   * @param whereClause WHERE 条件（简单等值条件）
+   * @param whereArgs WHERE 条件的值
+   * @returns 影响的行数，-1 表示失败
+   */
+  async update(table: string, data: Record<string, string | number | null>, whereClause: string, whereArgs: string[]): Promise<number> {
+    if (!this.store) {
+      return -1;
+    }
+
+    try {
+      // 构建 UPDATE SQL 语句
+      const setParts: string[] = [];
+      const setArgs: (string | number | null)[] = [];
+      const dataKeys = Object.keys(data);
+      for (let i = 0; i < dataKeys.length; i++) {
+        setParts.push(`${dataKeys[i]} = ?`);
+        setArgs.push(data[dataKeys[i]]);
+      }
+
+      // 合并 SET 参数和 WHERE 参数
+      const allArgs: (string | number | null)[] = [];
+      for (let i = 0; i < setArgs.length; i++) {
+        allArgs.push(setArgs[i]);
+      }
+      for (let i = 0; i < whereArgs.length; i++) {
+        allArgs.push(whereArgs[i]);
+      }
+
+      const sql = `UPDATE ${table} SET ${setParts.join(', ')} WHERE ${whereClause}`;
+      await this.store.executeSql(sql, allArgs);
+
+      // RDB executeSql 不返回影响行数，暂返回 0
+      hilog.info(DOMAIN, 'DatabaseService', 'Update executed for table %{public}s', table);
+      return 0;
+    } catch (error) {
+      hilog.error(DOMAIN, 'DatabaseService', 'Update failed: %{public}s', JSON.stringify(error));
+      return -1;
+    }
+  }
+
+  /**
+   * 删除数据
+   * @param table 表名
+   * @param whereClause WHERE 条件（简单等值条件）
+   * @param whereArgs WHERE 条件的值
+   * @returns 影响的行数，-1 表示失败
+   */
+  async delete(table: string, whereClause: string, whereArgs: string[]): Promise<number> {
+    if (!this.store) {
+      return -1;
+    }
+
+    try {
+      // 构建 DELETE SQL 语句
+      const sql = `DELETE FROM ${table} WHERE ${whereClause}`;
+      await this.store.executeSql(sql, whereArgs);
+
+      // RDB executeSql 不返回影响行数，暂返回 0
+      hilog.info(DOMAIN, 'DatabaseService', 'Delete executed for table %{public}s', table);
+      return 0;
+    } catch (error) {
+      hilog.error(DOMAIN, 'DatabaseService', 'Delete failed: %{public}s', JSON.stringify(error));
+      return -1;
+    }
+  }
+
 
   /**
    * 获取表行数
