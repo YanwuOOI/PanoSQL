@@ -194,6 +194,7 @@ class DatabaseService {
 
   /**
    * 获取表的所有列
+   * 使用 query() + RdbPredicates 获取列信息
    */
   async getColumns(tableName: string): Promise<ColumnInfo[]> {
     if (!this.store) {
@@ -201,10 +202,39 @@ class DatabaseService {
     }
 
     try {
-      // 使用 PRAGMA 查询列信息 - 但由于 ArkTS 类型限制，我们使用 predicate 查询
-      // 实际上这里需要用原生 SQL，暂返回空数组
-      hilog.warn(DOMAIN, 'DatabaseService', 'getColumns using simplified implementation');
-      return [];
+      // 使用 predicate 查询表数据，通过 ResultSet 获取列定义
+      const predicates = new relationalStore.RdbPredicates(tableName);
+      const resultSet = await this.store.query(predicates, ['*']);
+
+      const columns: ColumnInfo[] = [];
+
+      if (resultSet) {
+        // 获取列数和列名
+        const columnCount = resultSet.columnCount;
+        const columnNames: string[] = [];
+
+        for (let i = 0; i < columnCount; i++) {
+          columnNames.push(resultSet.getColumnName(i));
+        }
+
+        // 只查询一条记录来获取列信息
+        if (resultSet.goToFirstRow()) {
+          for (let i = 0; i < columnCount; i++) {
+            const col = new ColumnInfo();
+            col.name = columnNames[i];
+            // 暂不获取数据类型（需要通过值类型推断，RDB API 限制）
+            col.dataType = 'TEXT';
+            // 暂不包含 notNull、primaryKey 等信息（需要 PRAGMA）
+            columns.push(col);
+          }
+        }
+
+        resultSet.close();
+      }
+
+      hilog.info(DOMAIN, 'DatabaseService', 'getColumns found %{public}d columns for table %{public}s',
+        columns.length, tableName);
+      return columns;
     } catch (error) {
       hilog.error(DOMAIN, 'DatabaseService', 'Failed to get columns: %{public}s', JSON.stringify(error));
       return [];
